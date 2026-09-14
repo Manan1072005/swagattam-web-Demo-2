@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Grand Courtyard Estimator"
+description = "A customer-facing event quotation builder for Grand Courtyard where guests choose services, see live pricing, save an itemized quotation, print a bill, and share it through WhatsApp."
+version = "1.0.0"
+id = "artifacts/banquet-estimator"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23223
+
+[services.development]
+run = "pnpm --filter @workspace/banquet-estimator run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/banquet-estimator", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/banquet-estimator/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23223"
+BASE_PATH = "/"

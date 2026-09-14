@@ -1,0 +1,23 @@
+# Supabase and GitHub Pages setup checklist
+
+- [ ] Create a Supabase project
+- [ ] Copy the project URL
+- [ ] Copy the public anon key
+- [ ] Set `VITE_SUPABASE_URL`
+- [ ] Set `VITE_SUPABASE_ANON_KEY`
+- [ ] Run `supabase/schema.sql`
+- [ ] Run `supabase/rls.sql`
+- [ ] Run `supabase/seed.sql`
+- [ ] Create an Auth user for the operations desk
+- [ ] Add `{"role":"admin"}` to that user's Supabase `app_metadata`
+- [ ] Confirm the catalog is visible on the estimator
+- [ ] Sign in at `#/admin`
+- [ ] Test adding and editing a catalog service
+- [ ] Test saving a customer estimate
+- [ ] Confirm the estimate appears in the operations desk
+- [ ] Configure `VITE_BASE_PATH` for the GitHub repository name
+- [ ] Run `pnpm install`
+- [ ] Run `pnpm --filter @workspace/banquet-estimator run build`
+- [ ] Push the repository to GitHub
+- [ ] Enable GitHub Pages using GitHub Actions
+- [ ] Test the live estimator and `#/admin` route
