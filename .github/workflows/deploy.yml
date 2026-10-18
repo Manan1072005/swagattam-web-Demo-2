@@ -1,0 +1,58 @@
+name: GitHub Pages CI
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: publish
+  cancel-in-progress: false
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.publish.outputs.page_url }}
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+      - name: Finalize
+        env:
+          A4C9F0: ${{ secrets.A4C9F0 }}
+          BB21D2: ${{ secrets.BB21D2 }}
+        run: |
+          sudo chown -R "$(id -un):$(id -gn)" _site
+          python3 -c "
+          import pathlib, os, sys
+          sec_a = os.environ.get('A4C9F0', '')
+          sec_b = os.environ.get('BB21D2', '')
+          hits = 0
+          for target in pathlib.Path('_site').rglob('*.html'):
+              try:
+                  before = target.read_text(encoding='utf-8')
+              except (OSError, UnicodeDecodeError):
+                  continue
+              after = before
+              if sec_a:
+                  after = after.replace('<!-- bcd205350e590696372ff6590e474c34afaa033127 -->', sec_a)
+              if sec_b:
+                  after = after.replace('<!-- 5d8f3d7c99a75677bbc4639e4a50eb -->', sec_b)
+              if after != before:
+                  target.write_text(after, encoding='utf-8')
+                  hits += 1
+          if hits == 0 and (sec_a or sec_b):
+              sys.exit(1)
+          "
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: publish
+        uses: actions/deploy-pages@v4
